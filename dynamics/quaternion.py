@@ -136,7 +136,8 @@ def quaternion_to_dcm(q):
 
 def dcm_to_quaternion(C):
     """
-    Convert Direction Cosine Matrix to quaternion.
+    Convert Direction Cosine Matrix to quaternion
+    (Schaub & Junkins convention).
 
     Parameters
     ----------
@@ -151,38 +152,38 @@ def dcm_to_quaternion(C):
 
     if tr > 0:
 
-        s = np.sqrt(tr + 1.0) * 2
+        s = 2.0 * np.sqrt(tr + 1.0)
 
         q0 = 0.25 * s
-        q1 = (C[2,1] - C[1,2]) / s
-        q2 = (C[0,2] - C[2,0]) / s
-        q3 = (C[1,0] - C[0,1]) / s
+        q1 = (C[1, 2] - C[2, 1]) / s
+        q2 = (C[2, 0] - C[0, 2]) / s
+        q3 = (C[0, 1] - C[1, 0]) / s
 
-    elif (C[0,0] > C[1,1]) and (C[0,0] > C[2,2]):
+    elif (C[0, 0] > C[1, 1]) and (C[0, 0] > C[2, 2]):
 
-        s = np.sqrt(1 + C[0,0] - C[1,1] - C[2,2]) * 2
+        s = 2.0 * np.sqrt(1.0 + C[0, 0] - C[1, 1] - C[2, 2])
 
-        q0 = (C[2,1] - C[1,2]) / s
+        q0 = (C[1, 2] - C[2, 1]) / s
         q1 = 0.25 * s
-        q2 = (C[0,1] + C[1,0]) / s
-        q3 = (C[0,2] + C[2,0]) / s
+        q2 = (C[0, 1] + C[1, 0]) / s
+        q3 = (C[0, 2] + C[2, 0]) / s
 
-    elif C[1,1] > C[2,2]:
+    elif C[1, 1] > C[2, 2]:
 
-        s = np.sqrt(1 + C[1,1] - C[0,0] - C[2,2]) * 2
+        s = 2.0 * np.sqrt(1.0 + C[1, 1] - C[0, 0] - C[2, 2])
 
-        q0 = (C[0,2] - C[2,0]) / s
-        q1 = (C[0,1] + C[1,0]) / s
+        q0 = (C[2, 0] - C[0, 2]) / s
+        q1 = (C[0, 1] + C[1, 0]) / s
         q2 = 0.25 * s
-        q3 = (C[1,2] + C[2,1]) / s
+        q3 = (C[1, 2] + C[2, 1]) / s
 
     else:
 
-        s = np.sqrt(1 + C[2,2] - C[0,0] - C[1,1]) * 2
+        s = 2.0 * np.sqrt(1.0 + C[2, 2] - C[0, 0] - C[1, 1])
 
-        q0 = (C[1,0] - C[0,1]) / s
-        q1 = (C[0,2] + C[2,0]) / s
-        q2 = (C[1,2] + C[2,1]) / s
+        q0 = (C[0, 1] - C[1, 0]) / s
+        q1 = (C[0, 2] + C[2, 0]) / s
+        q2 = (C[1, 2] + C[2, 1]) / s
         q3 = 0.25 * s
 
     return normalize(np.array([q0, q1, q2, q3]))
