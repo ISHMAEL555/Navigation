@@ -1,7 +1,7 @@
 import numpy as np
 
 from dynamics.truth_model import TruthModel
-from sensors.gyroscope import Gyroscope
+from sensors.rate.gyroscope import Gyroscope
 
 
 # =============================================================================
