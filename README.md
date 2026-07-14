@@ -1,196 +1,128 @@
-# SPACECRAFT NAVIGATION FRAMEWORK
+<div align="center">
 
-A high-fidelity Python framework for spacecraft **attitude determination**, **attitude estimation**, and **sensor simulation**.
+# Navigation
 
-The objective of this repository is to develop a modular, verifiable, and extensible spacecraft navigation library following aerospace engineering principles. The framework models spacecraft attitude dynamics, realistic sensor measurements, classical attitude determination algorithms, and recursive state estimation techniques.
+### A Modular Spacecraft Attitude Navigation Framework
 
----
-
-## Features
-
-### Dynamics
-- Quaternion mathematics
-- Quaternion kinematics
-- Spacecraft attitude truth model
-- RK4 and Euler integration
-
-### Sensor Models *(In Progress)*
-- Gyroscope
-- Star Tracker
-- Sun Sensor
-- Magnetometer
-- Earth Horizon Sensor
-
-### Attitude Determination *(Planned)*
-- TRIAD
-- Davenport's q-Method
-- QUEST
-- OLAE
-
-### Attitude Estimation *(Planned)*
-- Multiplicative Extended Kalman Filter (MEKF)
-- Error-State Kalman Filter (ESKF)
-- Unscented Kalman Filter (UKF)
-
-### Verification
-- Unit testing using PyTest
-- Mathematical verification
-- Monte Carlo validation *(Planned)*
-- Consistency checks *(Planned)*
+*Design • Simulation • Verification • Validation*
 
 ---
 
-# Repository Structure
+**Developing a modular spacecraft attitude navigation framework for spacecraft attitude dynamics, sensor modelling, attitude determination, state estimation, and verification using aerospace software engineering practices.**
 
-```text
-Navigation/
-│
-├── dynamics/
-│   ├── quaternion.py
-│   ├── attitude_kinematics.py
-│   └── truth_model.py
-│
-├── sensors/
-│
-├── attitude_determination/
-│
-├── attitude_estimation/
-│
-├── simulation/
-│
-├── tests/
-│   ├── test_dynamics/
-│   ├── test_sensors/
-│   ├── test_attitude_determination/
-│   └── test_attitude_estimation/
-│
-└── docs/
-```
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![Status](https://img.shields.io/badge/Status-Active%20Development-success)
+![Tests](https://img.shields.io/badge/Tests-PyTest-green)
+![License](https://img.shields.io/badge/License-MIT-orange)
+
+</div>
 
 ---
 
-# Development Workflow
+# Overview
 
-Each module is developed using the following engineering workflow:
+Modern spacecraft rely on robust navigation software to determine and estimate their attitude using measurements from onboard sensors. Developing such software requires far more than implementing estimation algorithms—it requires mathematically consistent dynamics, realistic sensor models, modular software architecture, systematic verification, and statistical performance evaluation.
 
-```text
-Requirements
-      ↓
-Implementation
-      ↓
-Unit Testing
-      ↓
-Verification
-      ↓
-Integration
-```
+This repository is an engineering project focused on developing a **modular spacecraft attitude navigation framework** from first principles. The framework integrates spacecraft attitude dynamics, sensor modelling, classical attitude determination algorithms, and future state estimation techniques within a verification-driven software architecture.
 
-Every module is verified before it is integrated into the simulation framework.
+Unlike standalone implementations of individual algorithms, this project emphasizes **complete system integration**. Every component is independently developed, verified, and then integrated into a unified navigation pipeline capable of supporting future Monte Carlo campaigns, realistic sensor modelling, and recursive state estimation.
 
 ---
 
-# Current Status
+# Project Objectives
 
-## Dynamics
+The long-term objective of this project is to build a reusable spacecraft attitude navigation framework that supports:
 
-| Module | Status |
-|---------|:------:|
-| Quaternion Mathematics | ✅ Verified |
-| Attitude Kinematics | ✅ Verified |
-| Truth Model | ✅ Verified |
+- Spacecraft attitude dynamics simulation
+- Modular spacecraft sensor models
+- Classical attitude determination algorithms
+- Recursive state estimation algorithms
+- Monte Carlo verification campaigns
+- Performance benchmarking
+- Software verification and validation
+
+The project is designed to follow engineering practices commonly adopted in spacecraft Guidance, Navigation and Control (GNC) software development.
 
 ---
 
-## Sensors
+# Current Features
 
-| Module | Status |
-|---------|:------:|
-| Gyroscope | 🚧 |
-| Star Tracker | ⏳ |
-| Sun Sensor | ⏳ |
-| Magnetometer | ⏳ |
+## Spacecraft Dynamics
+
+- Quaternion Mathematics
+- Quaternion Kinematics
+- Truth Model
+- Euler Integration
+- Runge–Kutta 4 Integration
+
+---
+
+## Sensor Models
+
+### Rate Sensors
+
+- ✅ Gyroscope
+
+### Vector Sensors
+
+- ✅ Sun Sensor
+- ✅ Magnetometer
+
+### Absolute Sensors
+
+- 🚧 Star Tracker *(Planned)*
 
 ---
 
 ## Attitude Determination
 
-| Algorithm | Status |
-|------------|:------:|
-| TRIAD | ⏳ |
-| Davenport's q Method | ⏳ |
-| QUEST | ⏳ |
-| OLAE | ⏳ |
+Implemented algorithms include
+
+- ✅ TRIAD
+- ✅ QUEST
+- ✅ Davenport's q-Method
+- ✅ OLAE
 
 ---
 
-## Attitude Estimation
+## Verification
 
-| Algorithm | Status |
-|------------|:------:|
-| MEKF | ⏳ |
-| ESKF | ⏳ |
-| UKF | ⏳ |
+- ✅ Unit Testing
+- ✅ Integration Testing
+- 🚧 Monte Carlo Verification *(In Progress)*
 
 ---
 
-# Verification Philosophy
+# Engineering Philosophy
 
-This repository follows a verification-first development approach.
+The primary objective of this repository is **engineering reliability rather than algorithm implementation alone**.
 
-Every mathematical model is verified using automated unit tests before being integrated into higher-level navigation algorithms.
+Every module is developed using a structured verification workflow:
 
-Verification includes:
+```text
+Requirements
+      │
+      ▼
+Mathematical Model
+      │
+      ▼
+Software Implementation
+      │
+      ▼
+Unit Verification
+      │
+      ▼
+Integration Verification
+      │
+      ▼
+Monte Carlo Verification
+      │
+      ▼
+Performance Assessment
+```
 
-- Mathematical property verification
-- Numerical consistency checks
-- Coordinate transformation validation
-- Monte Carlo analysis (planned)
-- Statistical consistency checks (planned)
-
----
-
-# Roadmap
-
-## Phase 1
-- [x] Quaternion Mathematics
-- [x] Attitude Kinematics
-- [x] Truth Model
-
-## Phase 2
-- [ ] Gyroscope Model
-- [ ] Star Tracker
-- [ ] Sun Sensor
-- [ ] Magnetometer
-
-## Phase 3
-- [ ] TRIAD
-- [ ] Davenport's q-Method
-- [ ] QUEST
-- [ ] OLAE
-
-## Phase 4
-- [ ] MEKF
-- [ ] ESKF
-- [ ] UKF
-
-## Phase 5
-- [ ] Monte Carlo Simulation
-- [ ] Performance Analysis
-- [ ] Sensor Comparison
-- [ ] Estimator Benchmarking
+Each software component is independently verified before integration into the navigation framework. This development methodology promotes modularity, traceability, maintainability, and mathematical correctness throughout the project.
 
 ---
 
-# References
-
-1. Schaub, H., & Junkins, J. L. *Analytical Mechanics of Space Systems*.
-2. Markley, F. L., & Crassidis, J. L. *Fundamentals of Spacecraft Attitude Determination and Control*.
-3. Wertz, J. R. *Spacecraft Attitude Determination and Control*.
-4. Wie, B. *Space Vehicle Dynamics and Control*.
-
----
-
-# License
-
-This project is released under the MIT License.
-
+> **"Correct algorithms are important. Verified algorithms are essential."**
