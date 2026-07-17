@@ -39,7 +39,19 @@ class NominalScenario(Scenario):
         self.initial_angular_velocity = np.deg2rad([
             0.5,
             0.2,
-           -0.3
+            -0.3
+        ])
+
+        self.sun_reference_vector = np.array([
+            1.0,
+            0.0,
+            0.0
+        ])
+
+        self.magnetic_reference_vector = np.array([
+            0.0,
+            0.0,
+            1.0
         ])
 
         self.simulation_time = 100.0
@@ -51,11 +63,20 @@ class NominalScenario(Scenario):
 
         return {
 
-            "initial_quaternion": self.initial_quaternion,
+            "initial_quaternion":
+                self.initial_quaternion,
 
-            "initial_angular_velocity": self.initial_angular_velocity,
+            "initial_angular_velocity":
+                self.initial_angular_velocity,
 
-            "simulation_time": self.simulation_time
+            "sun_reference_vector":
+                self.sun_reference_vector,
+
+            "magnetic_reference_vector":
+                self.magnetic_reference_vector,
+
+            "simulation_time":
+                self.simulation_time
 
         }
 
@@ -63,14 +84,14 @@ class NominalScenario(Scenario):
         """
         Update the scenario.
 
-        The nominal scenario contains no time-varying events.
+        No events occur during the nominal simulation.
         """
 
         pass
 
     def is_complete(self, time):
         """
-        Check whether the simulation is complete.
+        Determine whether the simulation is complete.
         """
 
         return time >= self.simulation_time

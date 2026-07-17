@@ -1,462 +1,145 @@
-<div align="center">
+# Spacecraft Navigation Verification Framework
 
-# Navigation
-
-### A Modular Spacecraft Attitude Navigation Framework
-
-*Design • Simulation • Verification • Validation*
+A modular Python framework for the development, verification, and validation of spacecraft navigation systems. The framework provides an end-to-end environment for generating reference spacecraft states, simulating onboard navigation sensors, estimating spacecraft states, and quantitatively evaluating navigation performance against known truth.
 
 ---
 
-**Developing a modular spacecraft attitude navigation framework for spacecraft attitude dynamics, sensor modelling, attitude determination, state estimation, and verification using aerospace software engineering practices.**
+## Motivation
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
-![Status](https://img.shields.io/badge/Status-Active%20Development-success)
-![Tests](https://img.shields.io/badge/Tests-PyTest-green)
-![License](https://img.shields.io/badge/License-MIT-orange)
+Spacecraft navigation is fundamentally a state estimation problem. A spacecraft has no direct knowledge of its true state and must reconstruct it using imperfect measurements obtained from onboard sensors. Navigation algorithms combine these measurements to estimate quantities such as attitude, angular velocity, position, velocity, and sensor biases.
 
-</div>
+While numerous navigation algorithms are available in literature, comparatively few open-source projects provide a structured framework for objectively verifying and validating their performance. Most implementations focus on algorithm development, with limited emphasis on performance evaluation, repeatability, statistical analysis, or verification methodologies.
 
----
-
-# Overview
-
-Modern spacecraft rely on robust navigation software to determine and estimate their attitude using measurements from onboard sensors. Developing such software requires far more than implementing estimation algorithms—it requires mathematically consistent dynamics, realistic sensor models, modular software architecture, systematic verification, and statistical performance evaluation.
-
-This repository is an engineering project focused on developing a **modular spacecraft attitude navigation framework** from first principles. The framework integrates spacecraft attitude dynamics, sensor modelling, classical attitude determination algorithms, and future state estimation techniques within a verification-driven software architecture.
-
-Unlike standalone implementations of individual algorithms, this project emphasizes **complete system integration**. Every component is independently developed, verified, and then integrated into a unified navigation pipeline capable of supporting future Monte Carlo campaigns, realistic sensor modelling, and recursive state estimation.
+This project aims to bridge that gap by providing a modular verification framework that enables navigation algorithms to be evaluated under controlled simulation conditions using known reference truth.
 
 ---
 
-# Project Objectives
+## Philosophy
 
-The long-term objective of this project is to build a reusable spacecraft attitude navigation framework that supports:
+This framework is built around a single engineering question:
 
-- Spacecraft attitude dynamics simulation
-- Modular spacecraft sensor models
-- Classical attitude determination algorithms
-- Recursive state estimation algorithms
-- Monte Carlo verification campaigns
-- Performance benchmarking
-- Software verification and validation
+> **Given a spacecraft and its sensors, how accurately can a navigation algorithm reconstruct the true spacecraft state?**
 
-The project is designed to follow engineering practices commonly adopted in spacecraft Guidance, Navigation and Control (GNC) software development.
+Every component within the framework exists to answer this question.
+
+Rather than treating navigation algorithms as isolated implementations, the framework evaluates complete navigation pipelines by comparing estimated spacecraft states against reference truth generated from physics-based simulations.
+
+The objective is not only to develop navigation algorithms but also to produce quantitative engineering evidence demonstrating their accuracy, robustness, consistency, and computational performance.
 
 ---
 
-# Current Features
-
-## Spacecraft Dynamics
-
-- Quaternion Mathematics
-- Quaternion Kinematics
-- Truth Model
-- Euler Integration
-- Runge–Kutta 4 Integration
-
----
-
-## Sensor Models
-
-### Rate Sensors
-
-- ✅ Gyroscope
-
-### Vector Sensors
-
-- ✅ Sun Sensor
-- ✅ Magnetometer
-
-### Absolute Sensors
-
-- 🚧 Star Tracker *(Planned)*
-
----
-
-## Attitude Determination
-
-Implemented algorithms include
-
-- ✅ TRIAD
-- ✅ QUEST
-- ✅ Davenport's q-Method
-- ✅ OLAE
-
----
-
-## Verification
-
-- ✅ Unit Testing
-- ✅ Integration Testing
-- 🚧 Monte Carlo Verification *(In Progress)*
-
----
-
-# Engineering Philosophy
-
-The primary objective of this repository is **engineering reliability rather than algorithm implementation alone**.
-
-Every module is developed using a structured verification workflow:
+## Framework Architecture
 
 ```text
-Requirements
-      │
-      ▼
-Mathematical Model
-      │
-      ▼
-Software Implementation
-      │
-      ▼
-Unit Verification
-      │
-      ▼
-Integration Verification
-      │
-      ▼
-Monte Carlo Verification
-      │
-      ▼
-Performance Assessment
+                     Truth Model
+                          │
+                          ▼
+                Environment Models
+                          │
+                          ▼
+                  Sensor Models
+                          │
+                          ▼
+              Navigation Measurements
+                          │
+                          ▼
+              Navigation Algorithms
+          (TRIAD • QUEST • EKF • MEKF • UKF)
+                          │
+                          ▼
+                 Estimated State
+                          │
+                          ▼
+           Verification & Validation
+                          │
+                          ▼
+     Engineering Metrics • Reports • Plots
 ```
 
-Each software component is independently verified before integration into the navigation framework. This development methodology promotes modularity, traceability, maintainability, and mathematical correctness throughout the project.
+The framework separates the navigation problem into independent modules:
+
+- **Truth Models** generate the reference spacecraft state.
+- **Environment Models** simulate external references such as the Sun and Earth's magnetic field.
+- **Sensor Models** generate realistic onboard measurements.
+- **Navigation Algorithms** reconstruct the spacecraft state from sensor data.
+- **Verification** compares estimated states against the known truth using quantitative performance metrics.
 
 ---
 
-> **"Correct algorithms are important. Verified algorithms are essential."**
+## Features
 
-# Software Architecture
+### Dynamics
 
-The framework is designed using a modular software architecture in which every subsystem has a single well-defined responsibility. Rather than implementing navigation algorithms as standalone scripts, the project separates spacecraft dynamics, sensor modelling, attitude determination, simulation, and verification into independent software components.
+- Spacecraft attitude dynamics
+- Quaternion kinematics
+- Reference truth model
 
-This modular approach allows individual components to be developed, verified, and extended without affecting the remainder of the navigation framework.
+### Sensor Models
 
-```text
-                                    Navigation Framework
+- Gyroscope
+- Sun Sensor
+- Magnetometer
+- Configurable Gaussian measurement noise
 
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              Spacecraft Truth Model                          │
-│                                                                              │
-│   • Quaternion Propagation                                                   │
-│   • Attitude Kinematics                                                      │
-│   • True Angular Velocity                                                    │
-│   • True Direction Cosine Matrix                                             │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                       │
-                                       │
-                    ┌──────────────────┴──────────────────┐
-                    │                                     │
-                    ▼                                     ▼
+### Navigation
 
-        ┌───────────────────────┐          ┌────────────────────────┐
-        │     Rate Sensors      │          │     Vector Sensors     │
-        │                       │          │                        │
-        │ • Gyroscope           │          │ • Sun Sensor           │
-        │                       │          │ • Magnetometer         │
-        │                       │          │ • Earth Sensor (Planned)│
-        └───────────────────────┘          └────────────────────────┘
-                    │                                     │
-                    └──────────────────┬──────────────────┘
-                                       │
-                                       ▼
-                         ┌──────────────────────────┐
-                         │      Sensor Manager      │
-                         │                          │
-                         │ Measurement Collection   │
-                         │ Sensor Synchronization   │
-                         │ Data Packaging           │
-                         └──────────────────────────┘
-                                       │
-                                       ▼
-                    Body Vectors (V_B)
-                    Reference Vectors (V_N)
-                    Sensor Weights (w)
-                                       │
-                                       ▼
-             ┌───────────────────────────────────────────┐
-             │      Attitude Determination Algorithms    | 
-             │                                           │
-             │  • TRIAD                                  │
-             │  • QUEST                                  │
-             │  • Davenport's q-Method                   │
-             │  • OLAE                                   │
-             └───────────────────────────────────────────┘
-                                       │
-                                       ▼
-                         Estimated Spacecraft Attitude
-                                       │
-                                       ▼
-                    ┌─────────────────────────────────┐
-                    │ Verification & Performance      │
-                    │                                 │
-                    │ • Unit Testing                  │
-                    │ • Integration Testing           │
-                    │ • Monte Carlo Campaigns         │
-                    │ • Statistical Analysis          │
-                    └─────────────────────────────────┘
-```
+- TRIAD
+- Davenport's q-Method
+- QUEST
+- (Planned) EKF
+- (Planned) MEKF
+- (Planned) UKF
+
+### Verification
+
+- Unit testing
+- Integration testing
+- Monte Carlo verification framework
+- Automated statistical validation
+- Performance metrics
+- Verification campaigns
 
 ---
 
-# Navigation Pipeline
+## Current Status
 
-The complete navigation workflow implemented in this repository is illustrated below.
+### Implemented
 
-```text
-True Spacecraft Dynamics
-            │
-            ▼
-Quaternion Propagation
-            │
-            ▼
-Truth Attitude
-            │
-            ▼
-────────────────────────────────────────────────────────────
-                 Spacecraft Sensor Models
-────────────────────────────────────────────────────────────
-            │
-            ├────────────► Gyroscope
-            │
-            ├────────────► Sun Sensor
-            │
-            └────────────► Magnetometer
-            │
-            ▼
-Measured Sensor Data
-            │
-            ▼
-Sensor Manager
-            │
-            ▼
-Vector Observation Generation
+- Quaternion mathematics
+- Spacecraft truth model
+- Ideal sensor models
+- Gaussian measurement noise
+- TRIAD attitude determination
+- Davenport's q-Method
+- QUEST algorithm
+- OLAE
+- Comprehensive unit and integration tests
 
-      V_B        V_N        w
+### In Development
 
-            │
-            ▼
-────────────────────────────────────────────────────────────
-          Attitude Determination Algorithms
-────────────────────────────────────────────────────────────
-
-TRIAD
-
-QUEST
-
-Davenport's q-Method
-
-OLAE
-
-            │
-            ▼
-Estimated Attitude
-            │
-            ▼
-Attitude Error Analysis
-            │
-            ▼
-Verification & Validation
-```
+- Environment models
+- High-fidelity sensor models
+- Extended Kalman Filter (EKF)
+- Multiplicative Extended Kalman Filter (MEKF)
+- Unscented Kalman Filter (UKF)
+- Navigation performance campaigns
+- Automated verification reports
 
 ---
 
-# Software Design Principles
+## Roadmap
 
-The framework has been developed around several software engineering principles commonly adopted in aerospace software development.
+The framework is being developed incrementally with the following long-term objectives:
 
-### Modular Design
-
-Every subsystem has a clearly defined responsibility. Dynamics, sensor models, navigation algorithms, simulations, and verification tools are implemented independently to minimize coupling and improve maintainability.
-
-### Verification-Driven Development
-
-Each software module is verified through dedicated unit tests before being integrated into higher-level simulations. This approach enables early detection of implementation errors and provides confidence in mathematical correctness.
-
-### Separation of Concerns
-
-Simulation logic, sensor modelling, dynamics propagation, and navigation algorithms remain independent. Algorithms operate only on measurement data and are not coupled to individual sensor implementations.
-
-### Extensibility
-
-The architecture is designed to support future expansion, including additional spacecraft sensors, recursive state estimation algorithms, environmental models, disturbance torques, and hardware-in-the-loop verification without requiring major architectural changes.
-
-### Reusability
-
-Reusable modules reduce duplicated implementations and simplify future algorithm development. Sensor models, truth models, and simulation infrastructure can be shared across multiple navigation algorithms and verification campaigns.
+- Develop high-fidelity environment models.
+- Improve sensor realism through bias, random walk, scale factor, and field-of-view modelling.
+- Implement recursive navigation filters for spacecraft state estimation.
+- Develop reusable verification campaigns for deterministic and stochastic navigation algorithms.
+- Generate automated engineering evidence including plots, statistical analyses, and validation reports.
+- Support objective comparison of spacecraft navigation algorithms using standardized performance metrics.
 
 ---
 
-# Design Philosophy
+## License
 
-This repository is not intended to be a collection of independent attitude determination algorithms. Instead, it is being developed as an integrated spacecraft navigation framework where each software component contributes to a complete Guidance, Navigation and Control (GNC) simulation environment.
-
-The long-term objective is to provide a reusable platform for developing, testing, verifying, and benchmarking spacecraft navigation algorithms under realistic operating conditions.
-
-# Software Architecture
-
-The framework is designed using a modular software architecture in which every subsystem has a single well-defined responsibility. Rather than implementing navigation algorithms as standalone scripts, the project separates spacecraft dynamics, sensor modelling, attitude determination, simulation, and verification into independent software components.
-
-This modular approach allows individual components to be developed, verified, and extended without affecting the remainder of the navigation framework.
-
-```text
-                                    Navigation Framework
-
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              Spacecraft Truth Model                          │
-│                                                                              │
-│   • Quaternion Propagation                                                   │
-│   • Attitude Kinematics                                                      │
-│   • True Angular Velocity                                                    │
-│   • True Direction Cosine Matrix                                             │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                       │
-                                       │
-                    ┌──────────────────┴──────────────────┐
-                    │                                     │
-                    ▼                                     ▼
-
-        ┌───────────────────────┐          ┌────────────────────────┐
-        │     Rate Sensors       │          │     Vector Sensors      │
-        │                        │          │                         │
-        │ • Gyroscope            │          │ • Sun Sensor           │
-        │                        │          │ • Magnetometer         │
-        │                        │          │ • Earth Sensor (Planned)│
-        └───────────────────────┘          └────────────────────────┘
-                    │                                     │
-                    └──────────────────┬──────────────────┘
-                                       │
-                                       ▼
-                         ┌──────────────────────────┐
-                         │      Sensor Manager      │
-                         │                          │
-                         │ Measurement Collection   │
-                         │ Sensor Synchronization   │
-                         │ Data Packaging           │
-                         └──────────────────────────┘
-                                       │
-                                       ▼
-                    Body Vectors (V_B)
-                    Reference Vectors (V_N)
-                    Sensor Weights (w)
-                                       │
-                                       ▼
-             ┌────────────────────────────────────────────┐
-             │      Attitude Determination Algorithms      │
-             │                                            │
-             │  • TRIAD                                  │
-             │  • QUEST                                  │
-             │  • Davenport's q-Method                   │
-             │  • OLAE                                   │
-             └────────────────────────────────────────────┘
-                                       │
-                                       ▼
-                         Estimated Spacecraft Attitude
-                                       │
-                                       ▼
-                    ┌─────────────────────────────────┐
-                    │ Verification & Performance       │
-                    │                                 │
-                    │ • Unit Testing                  │
-                    │ • Integration Testing           │
-                    │ • Monte Carlo Campaigns         │
-                    │ • Statistical Analysis          │
-                    └─────────────────────────────────┘
-```
-
----
-
-# Navigation Pipeline
-
-The complete navigation workflow implemented in this repository is illustrated below.
-
-```text
-True Spacecraft Dynamics
-            │
-            ▼
-Quaternion Propagation
-            │
-            ▼
-Truth Attitude
-            │
-            ▼
-────────────────────────────────────────────────────────────
-                 Spacecraft Sensor Models
-────────────────────────────────────────────────────────────
-            │
-            ├────────────► Gyroscope
-            │
-            ├────────────► Sun Sensor
-            │
-            └────────────► Magnetometer
-            │
-            ▼
-Measured Sensor Data
-            │
-            ▼
-Sensor Manager
-            │
-            ▼
-Vector Observation Generation
-
-      V_B        V_N        w
-
-            │
-            ▼
-────────────────────────────────────────────────────────────
-          Attitude Determination Algorithms
-────────────────────────────────────────────────────────────
-
-TRIAD
-
-QUEST
-
-Davenport's q-Method
-
-OLAE
-
-            │
-            ▼
-Estimated Attitude
-            │
-            ▼
-Attitude Error Analysis
-            │
-            ▼
-Verification & Validation
-```
-
----
-
-# Software Design Principles
-
-The framework has been developed around several software engineering principles commonly adopted in aerospace software development.
-
-### Modular Design
-
-Every subsystem has a clearly defined responsibility. Dynamics, sensor models, navigation algorithms, simulations, and verification tools are implemented independently to minimize coupling and improve maintainability.
-
-### Verification-Driven Development
-
-Each software module is verified through dedicated unit tests before being integrated into higher-level simulations. This approach enables early detection of implementation errors and provides confidence in mathematical correctness.
-
-### Separation of Concerns
-
-Simulation logic, sensor modelling, dynamics propagation, and navigation algorithms remain independent. Algorithms operate only on measurement data and are not coupled to individual sensor implementations.
-
-### Extensibility
-
-The architecture is designed to support future expansion, including additional spacecraft sensors, recursive state estimation algorithms, environmental models, disturbance torques, and hardware-in-the-loop verification without requiring major architectural changes.
-
-### Reusability
-
-Reusable modules reduce duplicated implementations and simplify future algorithm development. Sensor models, truth models, and simulation infrastructure can be shared across multiple navigation algorithms and verification campaigns.
-
----
-
-# Design Philosophy
-
-This repository is not intended to be a collection of independent attitude determination algorithms. Instead, it is being developed as an integrated spacecraft navigation framework where each software component contributes to a complete Guidance, Navigation and Control (GNC) simulation environment.
-
-The long-term objective is to provide a reusable platform for developing, testing, verifying, and benchmarking spacecraft navigation algorithms under realistic operating conditions.
+This project is released under the MIT License.
